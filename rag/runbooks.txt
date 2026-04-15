@@ -1,0 +1,5 @@
+
+database timeout -> restart service or check connection pool
+out of memory -> increase memory limits or optimize usage
+CrashLoopBackOff -> check logs and restart pod
+high latency -> investigate dependencies or scale service
