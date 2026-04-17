@@ -1,0 +1,60 @@
+# Options are 'environment: local' or 'environment: cloud'
+environment: local
+
+llm:
+  provider: ollama
+  model: mistral
+
+services:
+  ollama:
+    url: "http://localhost:11434"
+  qdrant:
+    host: "localhost"
+    port: 6333
+  llm:
+    url: ""
+    api_key: ""
+
+execution:
+  mode: local
+
+arbiter:
+  thresholds:
+    hard: 0.4
+    soft: 0.6
+
+policy:
+  enabled: true
+  default_risk: 0.3
+
+learning:
+  weights:
+    success: 0.3
+    health: 0.7
+
+agents:
+  defaults:
+    unknown_signature: "unknown"
+    unknown_confidence: 0.4
+    low_confidence: 0.3
+
+analysis:
+  confidence:
+    default: 0.7
+
+rag:
+  retrieval:
+    top_k: 3
+    default_confidence: 0.3
+
+# 1. When using 'environment: local' use the model choice below
+#embedding:
+#  model: all-MiniLM-L6-v2
+
+# 2. When using 'environment: cloud'use the model choice below
+#embedding:
+#  model: all-mpnet-base-v2
+
+embedding:
+  model: all-MiniLM-L6-v2
+  dimension: 384

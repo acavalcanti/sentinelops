@@ -1,0 +1,8 @@
+signatures:
+  - name: oom_error
+    match: ["memory", "oom"]
+    confidence: 0.8
+
+  - name: db_timeout
+    match: ["timeout", "database"]
+    confidence: 0.7

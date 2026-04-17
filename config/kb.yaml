@@ -1,0 +1,3 @@
+kb:
+  - signature: oom_error
+    action: restart_deployment

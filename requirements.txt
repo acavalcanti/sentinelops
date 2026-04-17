@@ -1,0 +1,6 @@
+streamlit
+langgraph
+requests
+qdrant-client
+sentence-transformers
+pyyaml

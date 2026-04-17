@@ -1,0 +1,4 @@
+tools:
+  restart_deployment:
+    handler: restart_deployment
+    risk: low
