@@ -1,8 +1,17 @@
-from mcp.executor import execute_mcp
+from core.config import CONFIG
 
-def execute(action_spec, config):
 
-    if config["main"]["execution"]["mode"] == "local":
-        return execute_mcp(action_spec)
+def execute(action_spec, config=CONFIG):
 
-    return {"status": "cloud"}
+    if not action_spec:
+        return {
+            "status": "skipped",
+            "reason": "no action_spec"
+        }
+
+    # MOCK EXECUTION
+    return {
+        "status": "success",
+        "action": action_spec.get("action"),
+        "target": action_spec.get("target")
+    }

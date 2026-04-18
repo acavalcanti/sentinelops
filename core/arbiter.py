@@ -1,21 +1,39 @@
 from core.config import CONFIG
 
-def confidence_arbiter(state):
 
-    cfg = CONFIG["main"]["arbiter"]["thresholds"]
+def confidence_arbiter(state: dict) -> dict:
 
-    scores = [
-        state.get("analysis_confidence", 0),
-        state.get("retrieval_confidence", 0),
-        state.get("decision_confidence", 0)
-    ]
+    cfg = CONFIG["main"]["arbiter"]
 
-    min_score = min(scores)
+    thresholds = cfg["thresholds"]
+    weights = cfg["weights"]
 
-    if min_score < cfg["hard"]:
+    hard = thresholds["hard"]
+    review = thresholds["review"]
+    soft = thresholds["soft"]
+
+    w_analysis = weights["analysis"]
+    w_rag = weights["rag"]
+    w_decision = weights["decision"]
+
+    analysis_conf = state.get("analysis_confidence", 0.0)
+    rag_conf = state.get("rag_confidence", 0.0)
+    decision_conf = state.get("decision_confidence", 0.0)
+
+    final_conf = (
+        analysis_conf * w_analysis +
+        rag_conf * w_rag +
+        decision_conf * w_decision
+    )
+
+    state["final_confidence"] = round(final_conf, 3)
+
+    if final_conf < hard:
         state["arbiter_decision"] = "halt"
-    elif min_score < cfg["soft"]:
-        state["arbiter_decision"] = "escalate"
+
+    elif final_conf < review:
+        state["arbiter_decision"] = "review"
+
     else:
         state["arbiter_decision"] = "proceed"
 

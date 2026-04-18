@@ -3,7 +3,7 @@ environment: local
 
 llm:
   provider: ollama
-  model: mistral
+  model: "phi:latest"
 
 services:
   ollama:
@@ -18,14 +18,64 @@ services:
 execution:
   mode: local
 
-arbiter:
-  thresholds:
-    hard: 0.4
-    soft: 0.6
+analysis:
+  prompt: |
+    You are an SRE assistant.
+
+    Analyze the log and explain the issue in a concise way.
+    Do not create additional tasks or examples.
+
+    Log:
+    {log}
+
+  fallback_text: "No analysis generated"
+
+  confidence:
+    base: 0.6
+    variance_min: 0.1
+    variance_max: 0.3
+    max: 1.0
+    precision: 3
+
+metrics:
+  keys:
+    status: "status"
+
+  values:
+    success: "success"
+
+  health:
+    success_bias: 0.7
+
+  weights:
+    execution: 0.3
+    health: 0.5
+    recurrence: 0.2
+
+  round: 2
+
+history:
+  file: "data/history.json"
+  limit: 20
 
 policy:
   enabled: true
   default_risk: 0.3
+  rules:
+    restart_deployment:
+      allowed: true
+      risk: low
+
+arbiter:
+  thresholds:
+    hard: 0.3
+    review: 0.5
+    soft: 0.7
+
+  weights:
+    analysis: 0.4
+    rag: 0.4
+    decision: 0.2
 
 learning:
   weights:
@@ -38,23 +88,21 @@ agents:
     unknown_confidence: 0.4
     low_confidence: 0.3
 
-analysis:
-  confidence:
-    default: 0.7
-
 rag:
   retrieval:
     top_k: 3
     default_confidence: 0.3
 
-# 1. When using 'environment: local' use the model choice below
-#embedding:
-#  model: all-MiniLM-L6-v2
-
-# 2. When using 'environment: cloud'use the model choice below
-#embedding:
-#  model: all-mpnet-base-v2
+main:
+  rag:
+    top_k: 3
 
 embedding:
   model: all-MiniLM-L6-v2
   dimension: 384
+
+decision:
+  allowed_actions:
+    - restart_deployment
+  default_target: order-service
+  default_namespace: default

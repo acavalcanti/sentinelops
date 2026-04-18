@@ -1,0 +1,116 @@
+[
+  {
+    "timestamp": "2026-04-17 22:56:08.849361",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.569,
+    "arbiter": "proceed",
+    "metrics": {}
+  },
+  {
+    "timestamp": "2026-04-17 23:33:09.149256",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.52,
+    "arbiter": "proceed",
+    "metrics": {
+      "execution_success": false,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": -0.2
+    }
+  },
+  {
+    "timestamp": "2026-04-18 10:29:45.898259",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.498,
+    "arbiter": "review",
+    "metrics": {
+      "execution_success": false,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": -0.2
+    }
+  },
+  {
+    "timestamp": "2026-04-18 10:30:22.608996",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.485,
+    "arbiter": "review",
+    "metrics": {
+      "execution_success": false,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": -0.2
+    }
+  },
+  {
+    "timestamp": "2026-04-18 10:30:53.624622",
+    "log": "crashloopbackoff error",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.608,
+    "arbiter": "proceed",
+    "metrics": {
+      "execution_success": false,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": -0.2
+    }
+  },
+  {
+    "timestamp": "2026-04-18 10:31:28.492829",
+    "log": "crashloopbackoff error",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.569,
+    "arbiter": "proceed",
+    "metrics": {
+      "execution_success": true,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": 0.1
+    }
+  },
+  {
+    "timestamp": "2026-04-18 10:56:36.927616",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.479,
+    "arbiter": "review",
+    "metrics": {
+      "execution_success": false,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": -0.2
+    }
+  }
+]

@@ -1,12 +1,159 @@
 import streamlit as st
-from main import run
+import json
+import time
 
-st.title("SentinelOps AI")
+from orchestrator.pipeline import run_pipeline
+from llm.providers.ollama import stream_generate
+from core.config import CONFIG
 
-log = st.text_area("Log")
+st.set_page_config(layout="wide")
+st.title("🧠 SentinelOps AI — Glass Box Demo")
 
-if st.button("Run"):
-    result = run(log)
+# INPUT
+log = st.text_area(
+    "Incident Log",
+    "ERROR: OutOfMemoryError container restart loop in order-service"
+)
 
-    st.subheader("Pipeline")
-    st.json(result)
+if st.button("Run Analysis"):
+
+    state = run_pipeline({"log": log})
+
+    col1, col2 = st.columns([2, 1])
+
+    # =========================
+    # LEFT — REASONING
+    # =========================
+    with col1:
+
+        st.header("🧠 AI Reasoning")
+
+        # ANALYSIS
+        with st.expander("📌 Analysis", expanded=True):
+
+            analysis = state.get("analysis")
+
+            if analysis:
+                st.markdown(analysis)
+            else:
+                container = st.empty()
+                text = ""
+
+                try:
+                    for token in stream_generate(log, CONFIG):
+                        text += token
+                        container.markdown(text)
+                except:
+                    st.warning("No analysis available")
+
+            st.metric("Confidence", state.get("analysis_confidence", 0))
+
+        # RAG
+        with st.expander("📚 RAG Retrieval", expanded=True):
+
+            candidates = state.get("rag_candidates", [])
+
+            if candidates:
+                for c in candidates:
+                    st.write(c["action"])
+                    st.progress(float(c["score"]))
+            else:
+                st.info("No candidates")
+
+            st.metric("RAG Confidence", state.get("rag_confidence", 0))
+
+        # DECISION
+        with st.expander("🎯 Decision", expanded=True):
+            st.json(state.get("decision", {}))
+
+        # CONFIDENCE
+        with st.expander("📊 Confidence Breakdown", expanded=True):
+
+            st.bar_chart({
+                "analysis": float(state.get("analysis_confidence", 0)),
+                "rag": float(state.get("rag_confidence", 0)),
+                "decision": float(state.get("decision_confidence", 0)),
+                "final": float(state.get("final_confidence", 0))
+            })
+
+            st.metric("Final Confidence", state.get("final_confidence", 0))
+
+    # =========================
+    # RIGHT — GOVERNANCE
+    # =========================
+    with col2:
+
+        st.header("🛡️ Governance")
+
+        arbiter = state.get("arbiter_decision")
+
+        if arbiter == "halt":
+            st.error("HALT")
+        elif arbiter == "review":
+            st.warning("REVIEW")
+        else:
+            st.success("PROCEED")
+
+        st.metric("Decision", arbiter)
+
+        st.divider()
+
+        # FLOW
+        st.header("🧠 Pipeline Flow")
+
+        for step, key in [
+            ("Analysis", "analysis_confidence"),
+            ("RAG", "rag_confidence"),
+            ("Decision", "decision_confidence"),
+            ("Arbiter", "final_confidence")
+        ]:
+            st.write(step)
+            st.progress(float(state.get(key, 0)))
+            time.sleep(0.1)
+
+        st.divider()
+
+        # EXECUTION
+        st.header("⚙️ Execution")
+
+        execution = state.get("execution_result")
+
+        if isinstance(execution, dict):
+            st.json(execution)
+        else:
+            st.info("No execution")
+
+    # =========================
+    # METRICS
+    # =========================
+    st.header("📊 Outcome Evaluation")
+
+    metrics = state.get("metrics")
+
+    if metrics:
+        st.json(metrics)
+    else:
+        st.info("No metrics available")
+
+    # =========================
+    # HISTORY
+    # =========================
+    st.header("📈 History")
+
+    try:
+        with open(CONFIG["main"]["history"]["file"]) as f:
+            history = json.load(f)
+    except:
+        history = []
+
+    if history:
+        scores = [
+            float(h.get("metrics", {}).get("score", 0))
+            for h in history
+        ]
+
+        st.line_chart(scores)
+
+    # DEBUG
+    with st.expander("🔎 Full State Debug"):
+        st.json(state)

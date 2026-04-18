@@ -1,34 +1,41 @@
-from qdrant_client import QdrantClient
-from rag.embedding import embed
 from core.config import CONFIG
+from rag.embedding import embed
+from qdrant_client import QdrantClient
 
-cfg = CONFIG["main"]["services"]["qdrant"]
+client = QdrantClient(
+    host=CONFIG["main"]["services"]["qdrant"]["host"],
+    port=CONFIG["main"]["services"]["qdrant"]["port"]
+)
 
-client = QdrantClient(cfg["host"], port=cfg["port"])
 
 def rag_agent(state):
 
-    sig = state["signatures"][0][0]
+    query_vector = embed(state["log"])
 
-    vector = embed(sig)
+    top_k = CONFIG["main"]["rag"]["retrieval"]["top_k"]
 
-    rag_cfg = CONFIG["main"]["rag"]["retrieval"]
-
-    results = client.search(
+    # 🔥 FIX AQUI
+    results = client.query_points(
         collection_name="incidents",
-        query_vector=vector,
-        limit=rag_cfg["top_k"]
-    )
+        query=query_vector,
+        limit=top_k
+    ).points
 
-    candidates = [
-        {"action": r.payload["action"], "score": r.score}
-        for r in results
-    ]
+    candidates = []
+    scores = []
+
+    for r in results:
+        candidates.append({
+            "action": r.payload.get("action"),
+            "score": r.score
+        })
+        scores.append(r.score)
 
     state["rag_candidates"] = candidates
 
-    state["retrieval_confidence"] = (
-        max([r.score for r in results], default=rag_cfg["default_confidence"])
-    )
+    if scores:
+        state["rag_confidence"] = max(scores)
+    else:
+        state["rag_confidence"] = CONFIG["main"]["rag"]["retrieval"]["default_confidence"]
 
     return state

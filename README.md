@@ -2,15 +2,18 @@
 
 ## Overview
 
-SentinelOps AI is an AI-driven incident analysis and remediation platform designed to demonstrate how modern AI systems can be safely integrated into enterprise operations.
-
-This project simulates a real-world AI Ops system using:
+SentinelOps AI is a Glass-Box AI Ops demo platform designed to demonstrate how an enterprise-grade incident analysis and remediation system can be built using:
 
 - Multi-agent orchestration
 - Retrieval-Augmented Generation (RAG)
-- Policy-driven governance
-- Execution abstraction (MCP)
-- Hybrid LLM inference (local + cloud)
+- Policy-based governance
+- Safe execution abstraction (MCP)
+
+This project prioritizes:
+
+Explainability over autonomy
+Correct architecture over production scale
+Demonstration clarity over complexity
 
 ---
 
@@ -72,10 +75,16 @@ Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → E
 - Python 3.10+
 - Podman
 - podman-compose
+- Ollama
 
 ### Run services
 
-podman-compose -f infra/podman-compose.yaml up
+podman compose -f infra/podman-compose.yaml up
+
+### Mac user might need to run this steps to create a virtual environment
+
+python3 -m venv .venv
+source .venv/bin/activate
 
 ### Install dependencies
 
@@ -84,6 +93,24 @@ pip install -r requirements.txt
 ### Initialize RAG
 
 python -c "from rag.setup import init_qdrant; init_qdrant()"
+
+### Install Ollama
+
+brew install ollama
+
+### Start Ollama server
+
+ollama serve
+
+### Pull a lightweight model (RECOMMENDED)
+
+ollama pull phi
+
+### Test model
+
+ollama run phi
+
+If the model responds, setup is correct.
 
 ### Run app
 

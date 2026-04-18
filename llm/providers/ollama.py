@@ -1,4 +1,6 @@
 import requests
+import json
+
 
 def generate(prompt, config):
 
@@ -11,3 +13,22 @@ def generate(prompt, config):
     })
 
     return res.json()["response"]
+
+def stream_generate(prompt, config):
+
+    url = config["main"]["services"]["ollama"]["url"]
+
+    response = requests.post(
+        f"{url}/api/generate",
+        json={
+            "model": config["main"]["llm"]["model"],
+            "prompt": prompt,
+            "stream": True
+        },
+        stream=True
+    )
+
+    for line in response.iter_lines():
+        if line:
+            data = json.loads(line.decode())
+            yield data.get("response", "")
