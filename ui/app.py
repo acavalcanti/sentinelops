@@ -29,7 +29,7 @@ if st.button("Run Analysis"):
         st.header("🧠 AI Reasoning")
 
         # 🔥 NOVO — explicação da confiança (sem hardcode)
-        st.caption(CONFIG["main"]["ui"]["confidence_note"])
+        st.caption(CONFIG["ui"]["confidence_note"])
 
         # -------------------------
         # ANALYSIS
@@ -117,8 +117,8 @@ if st.button("Run Analysis"):
         st.metric("Decision", arbiter)
 
         # 🔥 NOVO — explicação do arbiter (sem hardcode)
-        st.caption(CONFIG["main"]["ui"]["arbiter_label"])
-        st.write(state.get("arbiter_reason", CONFIG["main"]["ui"]["arbiter_default"]))
+        st.caption(CONFIG["ui"]["arbiter_label"])
+        st.write(state.get("arbiter_reason", CONFIG["ui"]["arbiter_default"]))
 
         st.divider()
 
@@ -135,7 +135,7 @@ if st.button("Run Analysis"):
         ]:
             st.write(step)
             st.progress(float(state.get(key, 0)))
-            time.sleep(CONFIG["main"]["ui"]["flow_delay"])
+            time.sleep(CONFIG["ui"]["flow_delay"])
 
         st.divider()
 
@@ -149,7 +149,7 @@ if st.button("Run Analysis"):
         if isinstance(execution, dict):
             st.json(execution)
         else:
-            st.info(CONFIG["main"]["ui"]["execution_empty"])
+            st.info(CONFIG["ui"]["execution_empty"])
 
     # =========================
     # METRICS
@@ -161,7 +161,7 @@ if st.button("Run Analysis"):
     if metrics:
         st.json(metrics)
     else:
-        st.info(CONFIG["main"]["ui"]["metrics_empty"])
+        st.info(CONFIG["ui"]["metrics_empty"])
 
     # =========================
     # HISTORY
@@ -169,7 +169,7 @@ if st.button("Run Analysis"):
     st.header("📈 History")
 
     try:
-        with open(CONFIG["main"]["history"]["file"]) as f:
+        with open(CONFIG["history"]["file"]) as f:
             history = json.load(f)
     except Exception:
         history = []
