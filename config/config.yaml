@@ -67,15 +67,16 @@ policy:
       risk: low
 
 arbiter:
-  thresholds:
-    hard: 0.3
-    review: 0.5
-    soft: 0.7
-
   weights:
     analysis: 0.4
-    rag: 0.4
-    decision: 0.2
+    rag: 0.3
+    decision: 0.3
+
+  thresholds:
+    hard: 0.4
+    review: 0.6
+
+  precision: 3
 
 learning:
   weights:
@@ -90,9 +91,9 @@ agents:
 
 rag:
   retrieval:
+    collection: "incidents"
     top_k: 3
     default_confidence: 0.3
-  top_k: 3
 
 ui:
   confidence_note: "⚠️ Confidence includes controlled variance to simulate real-world uncertainty."
