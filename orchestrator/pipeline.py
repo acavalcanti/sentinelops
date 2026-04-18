@@ -1,36 +1,24 @@
-from agents.analysis import analysis_agent
-from agents.signature import signature_agent
-from agents.rag import rag_agent
-from agents.decision import decision_agent
-from core.arbiter import confidence_arbiter
-from execution.router import execute
+from orchestrator.graph import build_graph
 from core.metrics import evaluate_outcome
 from core.history import save_incident
 from core.config import CONFIG
 
+graph = build_graph()
+
 
 def run_pipeline(state):
 
-    state = analysis_agent(state)
-    state = signature_agent(state)
-    state = rag_agent(state)
-    state = decision_agent(state)
+    state = graph.invoke(state)
 
-    state = confidence_arbiter(state)
-
+    # execution advisory
     if state["arbiter_decision"] == "halt":
         state["execution_result"] = {
-            "status": "blocked"
+            "status": CONFIG["execution"]["blocked_status"]
         }
-
-    if state["arbiter_decision"] == "halt":
-        state["execution_result"] = {
-            "status": "blocked"
-    }
     else:
         state["execution_result"] = {
-            "status": "skipped",
-            "reason": "advisory_mode"
+            "status": CONFIG["execution"]["skipped_status"],
+            "reason": CONFIG["execution"]["advisory_reason"]
         }
 
     state = evaluate_outcome(state)

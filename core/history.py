@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from core.config import CONFIG
 
-cfg = CONFIG["main"]["history"]
+cfg = CONFIG["history"]
 
 HISTORY_FILE = Path(cfg["file"])
 LIMIT = cfg["limit"]

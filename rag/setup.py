@@ -5,8 +5,8 @@ from core.config import CONFIG
 
 def init_qdrant():
 
-    cfg = CONFIG["main"]["services"]["qdrant"]
-    emb_cfg = CONFIG["main"]["embedding"]
+    cfg = CONFIG["services"]["qdrant"]
+    emb_cfg = CONFIG["embedding"]
 
     client = QdrantClient(cfg["host"], port=cfg["port"])
 

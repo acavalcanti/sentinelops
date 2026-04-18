@@ -4,10 +4,10 @@ import json
 
 def generate(prompt, config):
 
-    url = config["main"]["services"]["ollama"]["url"]
+    url = config["services"]["ollama"]["url"]
 
     res = requests.post(f"{url}/api/generate", json={
-        "model": config["main"]["llm"]["model"],
+        "model": config["llm"]["model"],
         "prompt": prompt,
         "stream": False
     })
@@ -16,12 +16,12 @@ def generate(prompt, config):
 
 def stream_generate(prompt, config):
 
-    url = config["main"]["services"]["ollama"]["url"]
+    url = config["services"]["ollama"]["url"]
 
     response = requests.post(
         f"{url}/api/generate",
         json={
-            "model": config["main"]["llm"]["model"],
+            "model": config["llm"]["model"],
             "prompt": prompt,
             "stream": True
         },

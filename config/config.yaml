@@ -15,9 +15,6 @@ services:
     url: ""
     api_key: ""
 
-execution:
-  mode: local
-
 analysis:
   prompt: |
     You are an SRE assistant.
@@ -43,6 +40,9 @@ metrics:
 
   values:
     success: "success"
+    advisory_success:
+      - "skipped"
+      - "blocked"
 
   health:
     success_bias: 0.7
@@ -92,17 +92,27 @@ rag:
   retrieval:
     top_k: 3
     default_confidence: 0.3
+  top_k: 3
 
-main:
-  rag:
-    top_k: 3
+ui:
+  confidence_note: "⚠️ Confidence includes controlled variance to simulate real-world uncertainty."
+  arbiter_label: "Arbiter Explanation"
+  arbiter_default: "No explanation available"
+  flow_delay: 0.1
+  execution_empty: "No execution"
+  metrics_empty: "No metrics available"
 
 embedding:
   model: all-MiniLM-L6-v2
   dimension: 384
 
 decision:
-  allowed_actions:
-    - restart_deployment
-  default_target: order-service
-  default_namespace: default
+  target_pattern: "\\w+-service"
+  default_target: "unknown-service"
+  default_namespace: "default"
+
+execution:
+  blocked_status: "blocked"
+  skipped_status: "skipped"
+  advisory_reason: "advisory_mode"
+  mode: local

@@ -2,7 +2,7 @@ import requests
 
 def generate(prompt, config):
 
-    url = config["main"]["services"]["llm"]["url"]
+    url = config["services"]["llm"]["url"]
 
     res = requests.post(url, json={
         "messages": [{"role": "user", "content": prompt}]

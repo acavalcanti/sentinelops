@@ -2,9 +2,11 @@ from core.config import CONFIG
 from rag.embedding import embed
 from qdrant_client import QdrantClient
 
+cfg = CONFIG["services"]["qdrant"]
+
 client = QdrantClient(
-    host=CONFIG["main"]["services"]["qdrant"]["host"],
-    port=CONFIG["main"]["services"]["qdrant"]["port"]
+    host=cfg["host"],
+    port=cfg["port"]
 )
 
 
@@ -12,13 +14,12 @@ def rag_agent(state):
 
     query_vector = embed(state["log"])
 
-    top_k = CONFIG["main"]["rag"]["retrieval"]["top_k"]
+    retrieval_cfg = CONFIG["rag"]["retrieval"]
 
-    # 🔥 FIX AQUI
     results = client.query_points(
-        collection_name="incidents",
+        collection_name=retrieval_cfg["collection"],
         query=query_vector,
-        limit=top_k
+        limit=retrieval_cfg["top_k"]
     ).points
 
     candidates = []
@@ -33,9 +34,8 @@ def rag_agent(state):
 
     state["rag_candidates"] = candidates
 
-    if scores:
-        state["rag_confidence"] = max(scores)
-    else:
-        state["rag_confidence"] = CONFIG["main"]["rag"]["retrieval"]["default_confidence"]
+    state["rag_confidence"] = (
+        max(scores) if scores else retrieval_cfg["default_confidence"]
+    )
 
     return state

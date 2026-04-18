@@ -4,17 +4,19 @@ import random
 
 def evaluate_outcome(state):
 
-    cfg = CONFIG["main"]["metrics"]
+    cfg = CONFIG["metrics"]
 
     execution = state.get("execution_result", {})
 
     status_key = cfg["keys"]["status"]
     success_value = cfg["values"]["success"]
 
-    execution_success = execution.get(status_key) == success_value
+    execution_success = (
+        execution.get(status_key) == success_value
+        or execution.get(status_key) in cfg["values"]["advisory_success"]
+    )
 
-    health_cfg = cfg["health"]
-    success_bias = health_cfg["success_bias"]
+    success_bias = cfg["health"]["success_bias"]
 
     system_healthy = execution_success and random.random() < success_bias
     recurrence = not system_healthy

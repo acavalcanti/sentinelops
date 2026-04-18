@@ -1,40 +1,35 @@
 from core.config import CONFIG
 
 
-def confidence_arbiter(state: dict) -> dict:
+def confidence_arbiter(state):
 
-    cfg = CONFIG["main"]["arbiter"]
+    cfg = CONFIG["arbiter"]
 
-    thresholds = cfg["thresholds"]
     weights = cfg["weights"]
-
-    hard = thresholds["hard"]
-    review = thresholds["review"]
-    soft = thresholds["soft"]
-
-    w_analysis = weights["analysis"]
-    w_rag = weights["rag"]
-    w_decision = weights["decision"]
-
-    analysis_conf = state.get("analysis_confidence", 0.0)
-    rag_conf = state.get("rag_confidence", 0.0)
-    decision_conf = state.get("decision_confidence", 0.0)
+    thresholds = cfg["thresholds"]
 
     final_conf = (
-        analysis_conf * w_analysis +
-        rag_conf * w_rag +
-        decision_conf * w_decision
+        state.get("analysis_confidence", 0.0) * weights["analysis"] +
+        state.get("rag_confidence", 0.0) * weights["rag"] +
+        state.get("decision_confidence", 0.0) * weights["decision"]
     )
 
-    state["final_confidence"] = round(final_conf, 3)
+    precision = cfg["precision"]
 
-    if final_conf < hard:
-        state["arbiter_decision"] = "halt"
+    state["final_confidence"] = round(final_conf, precision)
 
-    elif final_conf < review:
-        state["arbiter_decision"] = "review"
-
+    if final_conf < thresholds["hard"]:
+        decision = "halt"
+    elif final_conf < thresholds["review"]:
+        decision = "review"
     else:
-        state["arbiter_decision"] = "proceed"
+        decision = "proceed"
+
+    state["arbiter_decision"] = decision
+
+    state["arbiter_reason"] = (
+        f"confidence={round(final_conf, precision)} "
+        f"thresholds={thresholds}"
+    )
 
     return state

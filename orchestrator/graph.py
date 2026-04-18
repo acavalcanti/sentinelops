@@ -5,10 +5,15 @@ from agents.signature import signature_agent
 from agents.rag import rag_agent
 from agents.decision import decision_agent
 
-from core.arbiter import confidence_arbiter
 from core.policy import policy_check
-from execution.router import execute
-from core.learning import compute_learning
+from core.arbiter import confidence_arbiter
+
+
+def policy_agent(state):
+
+    state["policy_result"] = policy_check(state.get("action_spec", {}))
+    return state
+
 
 def build_graph():
 
@@ -18,13 +23,15 @@ def build_graph():
     graph.add_node("signature", signature_agent)
     graph.add_node("rag", rag_agent)
     graph.add_node("decision", decision_agent)
+    graph.add_node("policy", policy_agent)
     graph.add_node("arbiter", confidence_arbiter)
+
+    graph.set_entry_point("analysis")
 
     graph.add_edge("analysis", "signature")
     graph.add_edge("signature", "rag")
     graph.add_edge("rag", "decision")
-    graph.add_edge("decision", "arbiter")
-
-    graph.set_entry_point("analysis")
+    graph.add_edge("decision", "policy")
+    graph.add_edge("policy", "arbiter")
 
     return graph.compile()

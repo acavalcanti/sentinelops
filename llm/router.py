@@ -1,12 +1,6 @@
 from core.config import CONFIG
-from llm.providers import ollama, openshift
+from llm.providers.ollama import generate
+
 
 def call_llm(prompt):
-
-    provider = CONFIG["main"]["llm"]["provider"]
-
-    if provider == "ollama":
-        return ollama.generate(prompt, CONFIG)
-
-    if provider == "openshift":
-        return openshift.generate(prompt, CONFIG)
+    return generate(prompt, CONFIG)

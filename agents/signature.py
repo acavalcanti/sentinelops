@@ -10,7 +10,7 @@ def signature_agent(state):
             matches.append((sig["name"], sig["confidence"]))
 
     if not matches:
-        defaults = CONFIG["main"]["agents"]["defaults"]
+        defaults = CONFIG["agents"]["defaults"]
         matches = [(defaults["unknown_signature"], defaults["unknown_confidence"])]
 
     state["signatures"] = matches

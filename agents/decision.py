@@ -1,3 +1,15 @@
+import re
+from core.config import CONFIG
+
+
+def extract_target(log, fallback):
+
+    pattern = CONFIG["decision"]["target_pattern"]
+    match = re.search(pattern, log)
+
+    return match.group(0) if match else fallback
+
+
 def decision_agent(state):
 
     candidates = state.get("rag_candidates", [])
@@ -10,12 +22,12 @@ def decision_agent(state):
 
     best = max(candidates, key=lambda x: x["score"])
 
-    action = best["action"]
+    fallback_target = CONFIG["decision"]["default_target"]
 
     decision = {
-        "action": action,
-        "target": "order-service",
-        "namespace": "default"
+        "action": best["action"],
+        "target": extract_target(state["log"], fallback_target),
+        "namespace": CONFIG["decision"]["default_namespace"]
     }
 
     state["decision"] = decision

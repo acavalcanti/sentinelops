@@ -28,7 +28,12 @@ if st.button("Run Analysis"):
 
         st.header("🧠 AI Reasoning")
 
+        # 🔥 NOVO — explicação da confiança (sem hardcode)
+        st.caption(CONFIG["main"]["ui"]["confidence_note"])
+
+        # -------------------------
         # ANALYSIS
+        # -------------------------
         with st.expander("📌 Analysis", expanded=True):
 
             analysis = state.get("analysis")
@@ -43,30 +48,42 @@ if st.button("Run Analysis"):
                     for token in stream_generate(log, CONFIG):
                         text += token
                         container.markdown(text)
-                except:
+                except Exception:
                     st.warning("No analysis available")
 
-            st.metric("Confidence", state.get("analysis_confidence", 0))
+            st.metric(
+                "Confidence",
+                float(state.get("analysis_confidence", 0))
+            )
 
+        # -------------------------
         # RAG
+        # -------------------------
         with st.expander("📚 RAG Retrieval", expanded=True):
 
             candidates = state.get("rag_candidates", [])
 
             if candidates:
                 for c in candidates:
-                    st.write(c["action"])
-                    st.progress(float(c["score"]))
+                    st.write(c.get("action"))
+                    st.progress(float(c.get("score", 0)))
             else:
                 st.info("No candidates")
 
-            st.metric("RAG Confidence", state.get("rag_confidence", 0))
+            st.metric(
+                "RAG Confidence",
+                float(state.get("rag_confidence", 0))
+            )
 
+        # -------------------------
         # DECISION
+        # -------------------------
         with st.expander("🎯 Decision", expanded=True):
             st.json(state.get("decision", {}))
 
-        # CONFIDENCE
+        # -------------------------
+        # CONFIDENCE BREAKDOWN
+        # -------------------------
         with st.expander("📊 Confidence Breakdown", expanded=True):
 
             st.bar_chart({
@@ -76,7 +93,10 @@ if st.button("Run Analysis"):
                 "final": float(state.get("final_confidence", 0))
             })
 
-            st.metric("Final Confidence", state.get("final_confidence", 0))
+            st.metric(
+                "Final Confidence",
+                float(state.get("final_confidence", 0))
+            )
 
     # =========================
     # RIGHT — GOVERNANCE
@@ -96,9 +116,15 @@ if st.button("Run Analysis"):
 
         st.metric("Decision", arbiter)
 
+        # 🔥 NOVO — explicação do arbiter (sem hardcode)
+        st.caption(CONFIG["main"]["ui"]["arbiter_label"])
+        st.write(state.get("arbiter_reason", CONFIG["main"]["ui"]["arbiter_default"]))
+
         st.divider()
 
-        # FLOW
+        # -------------------------
+        # PIPELINE FLOW
+        # -------------------------
         st.header("🧠 Pipeline Flow")
 
         for step, key in [
@@ -109,11 +135,13 @@ if st.button("Run Analysis"):
         ]:
             st.write(step)
             st.progress(float(state.get(key, 0)))
-            time.sleep(0.1)
+            time.sleep(CONFIG["main"]["ui"]["flow_delay"])
 
         st.divider()
 
+        # -------------------------
         # EXECUTION
+        # -------------------------
         st.header("⚙️ Execution")
 
         execution = state.get("execution_result")
@@ -121,7 +149,7 @@ if st.button("Run Analysis"):
         if isinstance(execution, dict):
             st.json(execution)
         else:
-            st.info("No execution")
+            st.info(CONFIG["main"]["ui"]["execution_empty"])
 
     # =========================
     # METRICS
@@ -133,7 +161,7 @@ if st.button("Run Analysis"):
     if metrics:
         st.json(metrics)
     else:
-        st.info("No metrics available")
+        st.info(CONFIG["main"]["ui"]["metrics_empty"])
 
     # =========================
     # HISTORY
@@ -143,7 +171,7 @@ if st.button("Run Analysis"):
     try:
         with open(CONFIG["main"]["history"]["file"]) as f:
             history = json.load(f)
-    except:
+    except Exception:
         history = []
 
     if history:
@@ -154,6 +182,8 @@ if st.button("Run Analysis"):
 
         st.line_chart(scores)
 
+    # =========================
     # DEBUG
+    # =========================
     with st.expander("🔎 Full State Debug"):
         st.json(state)

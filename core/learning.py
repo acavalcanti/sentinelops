@@ -2,7 +2,7 @@ from core.config import CONFIG
 
 def compute_learning(state):
 
-    weights = CONFIG["main"]["learning"]["weights"]
+    weights = CONFIG["learning"]["weights"]
 
     success = state["execution_result"]["status"] == "success"
     health = state["system_health"]

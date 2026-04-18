@@ -2,7 +2,7 @@ from core.config import CONFIG
 
 def policy_check(action_spec):
 
-    cfg = CONFIG["main"]["policy"]
+    cfg = CONFIG["policy"]
 
     if not cfg.get("enabled", True):
         return {"approved": True}
