@@ -2,187 +2,285 @@
 
 ## Overview
 
-SentinelOps AI is a Glass-Box AI Ops demo platform designed to demonstrate how an enterprise-grade incident analysis and remediation system can be built using:
+SentinelOps AI is a **Glass-Box AI Ops demo platform** designed to demonstrate how to build **governed, explainable, multi-agent AI systems** for incident response in cloud-native environments.
 
-- Multi-agent orchestration
-- Retrieval-Augmented Generation (RAG)
-- Policy-based governance
-- Safe execution abstraction (MCP)
+This is **not a production system** — it is an **architecture-first demo** focused on:
 
-This project prioritizes:
-
-Explainability over autonomy
-Correct architecture over production scale
-Demonstration clarity over complexity
+* Explainability over autonomy
+* Governance over blind execution
+* System design over feature completeness
 
 ---
 
-## Purpose of this Demo
+## 🧠 Architecture First Approach
 
-This project was built to demonstrate:
+📄 **Full architecture and design rationale:**
+➡️ See [`ARCHITECTURE.md`](./ARCHITECTURE.md)
 
-- How to design AI systems beyond simple LLM calls
-- How to introduce governance and safety into AI decisions
-- How to integrate AI with enterprise platforms like OpenShift
-- How to separate reasoning (AI) from execution (systems)
+This document explains:
 
----
-
-## Key Concepts Demonstrated
-
-- AI Orchestration (LangGraph)
-- RAG with vector databases (Qdrant)
-- Model abstraction (LLM Router)
-- Policy-based decision control
-- Human-in-the-loop readiness
-- Cloud-native deployment
+* Why each layer exists
+* Tradeoffs (LangGraph, Qdrant, YAML policy)
+* Separation between probabilistic vs deterministic logic
+* Governance and risk mitigation strategy
 
 ---
 
-## Architecture
+## 🎯 Purpose of this Demo
 
-### High-Level Flow
+This project demonstrates:
 
-Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Learning
+* How to design **AI systems beyond simple LLM calls**
+* How to implement **governance layers for AI safety**
+* How to separate:
 
----
-
-### Architectural Principles
-
-- AI does not execute actions directly
-- All execution passes through policy validation
-- Decisions are explainable and traceable
-- Models are decoupled from orchestration
+  * **Reasoning (LLMs)**
+  * **Control (Policy / Arbiter)**
+  * **Execution (Systems)**
+* How to build **trustable AI systems** instead of black-box automation
 
 ---
 
-## Why These Technologies
+## 🧩 Core Concepts Demonstrated
 
-| Component | Reason |
-|----------|--------|
-| LangGraph | Structured agent orchestration |
-| Qdrant | Lightweight vector DB |
-| Streamlit | Fast UI for explainability |
-| Podman | OpenShift-aligned container runtime |
-| OpenShift AI | Enterprise model serving |
+* Multi-Agent Orchestration (LangGraph)
+* Retrieval-Augmented Generation (Qdrant)
+* Model Abstraction (LLM Router)
+* Policy-as-Code (YAML-driven governance)
+* Human-in-the-Loop readiness
+* Glass-Box Explainability UI
 
 ---
 
-## Local Setup
+## 🔁 System Flow
+
+```text
+Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation
+```
+
+---
+
+## 🧠 Key Architectural Principle
+
+> The LLM is treated as an **unreliable component** — and is governed accordingly.
+
+* LLM generates hypotheses
+* RAG adds context
+* Decision proposes action
+* Arbiter evaluates confidence
+* Policy validates safety
+* Execution is isolated
+
+---
+
+## 🖥️ Glass-Box UI (Core Differentiator)
+
+### 🧠 AI Reasoning + RAG + Decision
+
+![Image](https://images.openai.com/static-rsc-4/-jlk5V3Gfq_hnnVlar26kxJTTN9fllotGrxStSpnCBlTdnqfUgg1CvsKmSg_lwtBpp3yGJsoo4BT5IXViLjZSXBbSPNb1tCx9mjPH1F38PCdORfP9XyEti9NrK29WGEoe-NqAkoNVlPXcUtyJ7N_KnWjkI1q-MV_e0et99U0WgJeDBXQ91P-4-Ub6IgNN9qK?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/5ILzyRd4J8sDJE6QCWRF-YovVeyj--LJ4zT1RlqKG6Ldk13lsxnWiWTXGYxrrAa7BFp5uEyjq0oXEljL9vVBZEvdDsLU904FPKuv3QmjcVQ2dV30vWYg28EcjJOZjkndsae2AP7J0A1Z_eXHO7QaqgqRJVWhx50g89Mx4WcwSPND25VfT3dUS19d8Htqki2o?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/nRaNS2FoeqjFW9mi4W1YIaHSfcarZHbavSzDf8S8euYnYDQGU9DbnqDpAiHATL7tF9-z1Vy18BYHqZxagdRgWp4BnT6Tnwfpwd8FXgn-2R5OcPQrIEds6yL0kUwUnK6n9SzgFVpBxyAyxEKWNovolGxeMz7UborvMKkTKSxQe7vWiJ6BeRUBtFkVqcEGvWfk?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/V5RZZ__OhS3pMDqjN3H6A5LIi261Y8U6OIU8yW-g88bDfx7N1IgkiWSMDWtjBMPy17iju5cO9P-faqzSg8pYPl6ki76R7SOOBlQIHpLx3JfbEMrDBPyhijSyw-hWSvn_KwBoe8-BXlfUclacOvLz7eghuKgbWvuOhR6-nz8nwzvr9DHtLO5bpgHymgLgn2go?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/NYpTaMzNuaV9EEiwlbB-R3BN_Yvcb6ZEGKWWBLzz4tOTkWW_nNmgUt5uoHwaROgxjtFBa-IvJ_YoTOHFezpZ9GxgeaKcgq8PJ5ivK85PpXg12RUx96QwIi7RhHT_LLAuS_iqhdW7afUcDSzXiXHSHokvCgvNY2Mf-Fpwbe6S7VahcBPL_dPQ7ZazMDwTNupr?purpose=fullsize)
+
+The UI exposes:
+
+* Full reasoning trace
+* RAG retrieval candidates
+* Decision structure
+* Confidence breakdown
+
+---
+
+### 🛡️ Governance + Pipeline Flow + Execution
+
+![Image](https://images.openai.com/static-rsc-4/3w6v4rzwSKqCa1RdiVvyn-sR_gM0ATDDLGQCiU4vm-CEZlA7cB58E47muZQLCBH8LXfdIJdRtM7i_NQThuMTtZJt5xHHYPTePuwoXKHglSJ4yvTQIe6uxrS_AZkUNW-3S3pkGBp1GcsgVasLiRkcfUv2VOXy5VKYwVTtNyWTEQSpHp3oHes_IQhdYT0yzY_k?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/1j6hwDdHrdquUEU_YK4VDobPtlrIXsg8R_y3JU_RckC9cHB0bAsrPVxBff_LpEBbEtwl5KnVpUEb_SZdXhJv7j7K7DyBYeZ_CiUn2Rp4voTtkHnIilkiW7KlZeUI9ZEVRWcXIOXLIulmNcB_C-pzOSZohQNO-EV0iMGclsejqtEGWR9M-3hcze0L17o17h8X?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/oy-ZmkmaPKZ2PmaZerBbjNfLgwEEQmnP6Mx2QaT_jrGfD49pl85AQjaXvceC7UgoQ9BTCQGwRJZKtez7itCVBVonknQp7jCYH7xlHEUIcGMMpoyUdhA5S7_h-4aLvty6XOXq7kAcBhsEDLKW-ggBaAS8eAifsW5gZlDjbTnNzae55I-X8ika48vH6umLqCcr?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/zEzWrzA33Zp8Bgd8mZ3XnZ9gntgAlsPv_P1ZMWE-SH6hARN8L_vONMH7PYw1zRiEQL0FpUZ52tvIsdNP5Ft1C1yYdtmB9u4PxNQhwSvmlEHLPHQd0cUlMSmFb8uu1DZ1t52nAMv5sVVMpfnkH2aeaUfEXUl4kCx9GSCGVVDBXoORLONHzW3BvINQ1l_NYCtx?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/5QdV2EhUJITQLedgWdNC6H_w0Ctiq8MeuLaZDTsTs7QMOz7Oqx-ZRX8H1G2IH72bxKR97S112hU0lYlDNv3rNMUq-yOl4-1Y8DUxhFeh-rOgtQfn8BL8cVDhneXX1LncRafNarUeKZny-nKntRfos8eC65S7ydrd9MUaBb8h3IJ6EVnpfTgv1XyTYdDRpC1M?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/dA5GXw3Plms5hjW1iZPvMAt88E7SNFSxsKSscz_NTKaV0woWBIAFoLvTf61oauJ2dGZM6BIfwIk8rm4__Gn-UVHiF5Q-IAWy4DqGyVlNpKZC0BFFTf5R3T0gAkDx124zuVzH8YNUWlBrEr_q2qqtREy2lEMFmEfy9CxYf1uiKmnUH34ywOmgyEiaON3Up2Qt?purpose=fullsize)
+
+* Arbiter decision (halt / review / proceed)
+* Confidence flow across pipeline
+* Execution isolation (advisory mode)
+
+---
+
+### 📊 Outcome Evaluation + History
+
+![Image](https://images.openai.com/static-rsc-4/c-UqpUrWsJj2iz_5flIbvsVt37bve4InTqwsHI3aetCo-PhDz5exY_4dWW05Cpwh3udkRxXclUS9aNKUqwV7BZwnWkxcP94TYa_hkoxsKKRGu6iqluF3MizXpo_kgGCNZAtSeJ2MRd34oLPmQFSbNZNx9iipewHeesmld2GkmLsi9SilL62nzbdA_jr47Ezv?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/kfnRDNLWVrQnApPRjzdUsdcZuAvuwFRq5OmgOcoFxY8r06sfKS5Z2qCKR2tFUDHc9ERn2STHItU5hL9TyHKFmUc_G9TMIcY0zIF808puXFEJbLL7_NK9bcUg2HbrK9ajb3vZvoYgQ_ppM2RCyew9qaeLG9c36mwfxugHxm5Bqjd2VPKIM-BcudPko5UTrZ1E?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/u-qJOsD3FvW60zcZWRMT46dnhABH8div2OYOglnARDCk6xXSQgtOwiiMJITQOvzdCXCE1-HERICmtcnOlRyn73Zklrxp2YepznvFm-mqDhhfAAilnXyrxnmpFCe7qeLxDVQxp6HWAU_Htg07GWh18i5R9uRMrTnRxhDwsmAhUyQvdF8HKYiNlYKhRBlVSoSM?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/YkCqxYSk6HR8WiUQ9bV_-gzxEaUL1wBi_F-pzupcSZfxmxmp8VmodtjYb_YUEatnWcZzdKP5ves7kT4Wxt_FioxFNcTr5r5Je0gqvxj7wQ36S8miyOzU326pce0S4ifYkr_PnCNDHVBzPQ7ONAOjycNX9uYQx0lhJLXlH7dL6jFJGmwLteTnPba8I0vnPd6e?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/6SyzOWjkx9e2I9ETGRlzlA8UDSxzHl2tYhxXD24KX5mymXG3YGYN8EqkASBdQeo7L2aDhI8qYH5nhxeaKrDd7UJzU0D4FiT0zHe5Ow7Ac7kklNbGFtubqp4QnvM-cqcs5MJiGS61v5DKhpesoER-6rQK9nvrYvl4Ilwvn3dsaqPJaokNkX94c4DbJFddYGjD?purpose=fullsize)
+
+![Image](https://images.openai.com/static-rsc-4/AODhsuYKiDchSaZXoNMN6BXOcujkyDHlhqIFEL9KNHj0OiqRJ-mxOfc1oZvrA5wBSevc7LZ6kgN55oWFS2kArkK_5b6rq97TF5rz61HAefudQU_I34Wf2whSeb7Xr77z-48R5ZtwPHm6Rq3dlCl3TbBKCy1jMOxi7m_wS0iMLPAq5tH1LI05qwNLZIvIpVQY?purpose=fullsize)
+
+* Outcome scoring
+* System health simulation
+* Incident history tracking
+
+---
+
+## 🧱 Repository Structure
+
+```
+agents/        → reasoning units (analysis, rag, decision)
+orchestrator/  → LangGraph pipeline
+core/          → arbiter, metrics, config
+rag/           → embeddings + retrieval
+llm/           → model abstraction layer
+execution/     → safe action routing
+config/        → YAML-driven system behavior
+ui/            → Streamlit glass-box UI
+data/          → RAG knowledge base
+```
+
+---
+
+## ⚙️ Local Setup
 
 ### Requirements
 
-- Python 3.10+
-- Podman
-- podman-compose
-- Ollama
+* Python 3.10+
+* Podman + podman-compose
+* Ollama
 
-### Run services
+---
 
+### Start infrastructure
+
+```bash
 podman compose -f infra/podman-compose.yaml up
+```
 
-### Mac user might need to run this steps to create a virtual environment
+---
 
+### Python setup
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
-
-### Install dependencies
-
 pip install -r requirements.txt
+```
+
+---
 
 ### Initialize RAG
 
+```bash
 python -c "from rag.setup import init_qdrant; init_qdrant()"
+```
 
-### Install Ollama
+---
 
+### Start LLM (Ollama)
+
+```bash
 brew install ollama
-
-### Start Ollama server
-
 ollama serve
-
-### Pull a lightweight model (RECOMMENDED)
-
 ollama pull phi
-
-### Test model
-
 ollama run phi
-
-If the model responds, setup is correct.
-
-### Run app
-
-streamlit run ui/app.py
+```
 
 ---
 
-## OpenShift Deployment
+### Run application
 
-### Requirements
-
-- OpenShift 4.18+
-- OpenShift AI 2.x+
-
-### Steps
-
-1. Build image with Podman
-2. Push to registry
-3. Deploy using `oc`
-4. Configure ConfigMap
-5. Expose route
+```bash
+PYTHONPATH=. streamlit run ui/app.py
+```
 
 ---
 
-## OpenShift AI Integration
+## ☸️ OpenShift Alignment
 
-The system supports external model serving via OpenShift AI.
+Designed for:
 
-To enable:
+* OpenShift 4.18+
+* OpenShift AI (model serving via vLLM)
 
-- Deploy model using vLLM runtime
-- Update config.yaml with endpoint
-- Switch provider to "openshift"
+Supports:
 
----
-
-## Extending the System
-
-### Adding a new model
-
-- Create provider in `llm/providers/`
-- Register in router
+* External LLM endpoints
+* Container-native deployment
+* Config-driven environment switching
 
 ---
 
-### Adding a new tool
+## 🔌 Extensibility
 
-- Add to `tools.yaml`
-- Implement handler in MCP layer
+### Add new model
 
----
-
-### Adding new signatures
-
-- Update `signatures.yaml`
+* Implement provider in `llm/providers/`
+* Register in config
 
 ---
 
-## Future Improvements
+### Add new tool
 
-- Ansible Automation Platform integration
-- Kafka event-driven pipeline
-- Multi-model consensus
-- Advanced observability
-- Policy engine externalization
+* Update `tools.yaml`
+* Implement handler in execution layer
 
 ---
 
-## Demo Value
+### Add new signatures
 
-This project demonstrates a transition from:
+* Extend `signatures.yaml`
 
-- AI toy examples → real systems
-- LLM usage → AI architecture
-- scripts → platforms
+---
+
+## ⚠️ Known Limitations (Intentional for Demo)
+
+* Advisory mode only (no real execution)
+* Simulated outcome evaluation
+* Limited RAG dataset
+* No multi-tenant isolation
+
+---
+
+## 🚀 Future Improvements
+
+* Observability (agent drift / arbitration metrics)
+* Multi-model consensus
+* Policy engine externalization (OPA)
+* Event-driven pipeline (Kafka)
+* Real feedback loop (RAG write-back)
+
+---
+
+## 🧠 Demo Value
+
+This project demonstrates a shift from:
+
+```text
+LLM scripts → AI systems
+black-box → glass-box
+automation → governed decisioning
+```
+
+---
+
+## 🏁 Final Note
+
+This is a **high-signal architecture demo**, designed to show:
+
+* System thinking
+* Risk-aware AI design
+* Enterprise-ready patterns
+
+— not just code.
