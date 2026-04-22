@@ -66,12 +66,6 @@ policy:
       allowed: true
       risk: low
 
-arbiter:
-  weights:
-    analysis: 0.4
-    rag: 0.3
-    decision: 0.3
-
   thresholds:
     hard: 0.4
     review: 0.6
@@ -88,12 +82,6 @@ agents:
     unknown_signature: "unknown"
     unknown_confidence: 0.4
     low_confidence: 0.3
-
-rag:
-  retrieval:
-    collection: "incidents"
-    top_k: 3
-    default_confidence: 0.3
 
 ui:
   confidence_note: "⚠️ Confidence includes controlled variance to simulate real-world uncertainty."
@@ -114,9 +102,26 @@ decision:
 
 execution:
   blocked_status: "blocked"
-  skipped_status: "skipped"
-  advisory_reason: "advisory_mode"
+  skipped_status: "advisory"
+  advisory_reason: "Action not executed (advisory mode)"
   mode: local
 
+arbiter:
+  weights:
+    analysis: 0.4
+    rag: 0.3
+    decision: 0.3
+  thresholds:
+    hard: 0.4
+    review: 0.65
+  precision: 3
+
 feedback:
-  min_score: 0.7
+  min_score: 0.6
+
+rag:
+  retrieval:
+    collection: "incidents"
+    top_k: 3
+    default_confidence: 0.3
+    min_score: 0.2

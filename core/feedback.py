@@ -1,6 +1,7 @@
 from core.config import CONFIG
 from rag.embedding import embed
 from qdrant_client import QdrantClient
+import hashlib
 
 cfg = CONFIG["services"]["qdrant"]
 
@@ -30,7 +31,7 @@ def feedback_writeback(state):
     client.upsert(
         collection_name=CONFIG["rag"]["retrieval"]["collection"],
         points=[{
-            "id": hash(state["log"]),
+            "id": hashlib.sha256(state["log"].encode()).hexdigest(),
             "vector": vector,
             "payload": payload
         }]

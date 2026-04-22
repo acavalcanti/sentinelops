@@ -7,29 +7,47 @@ def confidence_arbiter(state):
 
     weights = cfg["weights"]
     thresholds = cfg["thresholds"]
-
-    final_conf = (
-        state.get("analysis_confidence", 0.0) * weights["analysis"] +
-        state.get("rag_confidence", 0.0) * weights["rag"] +
-        state.get("decision_confidence", 0.0) * weights["decision"]
-    )
-
     precision = cfg["precision"]
 
-    state["final_confidence"] = round(final_conf, precision)
+    hard = thresholds["hard"]
+    review = thresholds["review"]
 
-    if final_conf < thresholds["hard"]:
-        decision = "halt"
-    elif final_conf < thresholds["review"]:
-        decision = "review"
+    if hard > review:
+        raise ValueError("Invalid arbiter thresholds: hard > review")
+
+    analysis = state.get("analysis_confidence", 0.0)
+    rag = state.get("rag_confidence", 0.0)
+    decision = state.get("decision_confidence", 0.0)
+
+    total_weight = sum(weights.values()) or 1
+
+    final_conf = (
+        analysis * weights["analysis"] +
+        rag * weights["rag"] +
+        decision * weights["decision"]
+    ) / total_weight
+
+    final_conf = round(final_conf, precision)
+
+    state["final_confidence"] = final_conf
+
+    if final_conf < hard:
+        arbiter_decision = "halt"
+    elif final_conf < review:
+        arbiter_decision = "review"
     else:
-        decision = "proceed"
+        arbiter_decision = "proceed"
 
-    state["arbiter_decision"] = decision
+    state["arbiter_decision"] = arbiter_decision
 
-    state["arbiter_reason"] = (
-        f"confidence={round(final_conf, precision)} "
-        f"thresholds={thresholds}"
-    )
+    state["arbiter_reason"] = {
+        "final_confidence": final_conf,
+        "thresholds": thresholds,
+        "inputs": {
+            "analysis": analysis,
+            "rag": rag,
+            "decision": decision
+        }
+    }
 
     return state

@@ -12,7 +12,7 @@ class State(TypedDict, total=False):
 
     # rag
     rag_candidates: List[Dict]
-    retrieval_confidence: float
+    rag_confidence: float
 
     # decision
     action_spec: Dict
@@ -31,3 +31,6 @@ class State(TypedDict, total=False):
 
     # errors
     error: str
+
+    # trace
+    trace: Dict

@@ -60,6 +60,8 @@ This project demonstrates:
 ```text
 Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation
 ```
+* Feedback loop implemented via Qdrant write-back  
+* Triggered by outcome score threshold  
 
 ---
 
@@ -237,7 +239,6 @@ Supports:
 * Multi-model consensus
 * Policy engine externalization (OPA)
 * Event-driven pipeline (Kafka)
-* Real feedback loop (RAG write-back)
 
 ---
 

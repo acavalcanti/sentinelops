@@ -4,7 +4,7 @@ from agents.analysis import analysis_agent
 from agents.signature import signature_agent
 from agents.rag import rag_agent
 from agents.decision import decision_agent
-
+from core.state import State
 from core.policy import policy_check
 from core.arbiter import confidence_arbiter
 
@@ -17,7 +17,7 @@ def policy_agent(state):
 
 def build_graph():
 
-    graph = StateGraph(dict)
+    graph = StateGraph(State)
 
     graph.add_node("analysis", analysis_agent)
     graph.add_node("signature", signature_agent)

@@ -5,29 +5,47 @@ from core.config import CONFIG
 from core.observability import emit_trace
 from core.feedback import feedback_writeback
 
-graph = build_graph()
 
 def run_pipeline(state):
 
+    graph = build_graph()
+
     state = graph.invoke(state)
 
-    trace = emit_trace(state)
-    state["trace"] = trace
+    decision = state.get("arbiter_decision", "halt")
 
-    if state["arbiter_decision"] == "halt":
+    if decision == "halt":
+
         state["execution_result"] = {
             "status": CONFIG["execution"]["blocked_status"]
         }
-    else:
+
+    elif decision == "review":
+
         state["execution_result"] = {
             "status": CONFIG["execution"]["skipped_status"],
-            "reason": CONFIG["execution"]["advisory_reason"]
+            "reason": "Requires human review",
+            "action": state.get("action_spec")
+        }
+
+    else:  # proceed
+
+        state["execution_result"] = {
+            "status": CONFIG["execution"]["skipped_status"],
+            "reason": CONFIG["execution"]["advisory_reason"],
+            "action": state.get("action_spec")
         }
 
     state = evaluate_outcome(state)
 
     save_incident(state)
 
-    feedback_writeback(state)
+    score = state.get("metrics", {}).get("score", 0)
+
+    if score >= CONFIG["feedback"]["min_score"]:
+        feedback_writeback(state)
+
+    trace = emit_trace(state)
+    state["trace"] = trace
 
     return state
