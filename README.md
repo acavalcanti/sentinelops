@@ -12,7 +12,7 @@ This is **not a production system** — it is an **architecture-first demo** foc
 
 ---
 
-## 🧠 Architecture First Approach
+## Architecture First Approach
 
 📄 **Full architecture and design rationale:**  
 ➡️ See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
@@ -29,7 +29,7 @@ This document explains:
 
 ---
 
-## 🎯 Purpose of this Demo
+## Purpose of this Demo
 
 This project demonstrates:
 
@@ -44,7 +44,7 @@ This project demonstrates:
 
 ---
 
-## 🧩 Core Concepts Demonstrated
+## Core Concepts Demonstrated
 
 * Multi-Agent Orchestration (LangGraph)
 * Retrieval-Augmented Generation (Qdrant)
@@ -55,7 +55,7 @@ This project demonstrates:
 
 ---
 
-## 🔁 System Flow
+## System Flow
 
 ```text
 Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation
@@ -63,7 +63,7 @@ Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → E
 
 ---
 
-## 🧠 Key Architectural Principle
+## Key Architectural Principle
 
 > The LLM is treated as an **unreliable component** — and is governed accordingly.
 
@@ -76,9 +76,9 @@ Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → E
 
 ---
 
-## 🖥️ Glass-Box UI (Core Differentiator)
+## Glass-Box UI (Core Differentiator)
 
-### 🧠 AI Reasoning + RAG + Decision
+### AI Reasoning + RAG + Decision
 
 ![Image](./docs/img/img1.png)
 
@@ -91,7 +91,7 @@ The UI exposes:
 
 ---
 
-### 🛡️ Governance + Pipeline Flow + Execution
+### Governance + Pipeline Flow + Execution
 
 ![Image](./docs/img/img2.png)
 
@@ -101,7 +101,7 @@ The UI exposes:
 
 ---
 
-### 📊 Outcome Evaluation + History
+### Outcome Evaluation + History
 
 ![Image](./docs/img/img3.png)
 
@@ -113,7 +113,7 @@ The UI exposes:
 
 ---
 
-## 🧱 Repository Structure
+## Repository Structure
 
 ```
 agents/        → reasoning units (analysis, rag, decision)
@@ -130,7 +130,7 @@ docs/          → Project documentation
 
 ---
 
-## ⚙️ Local Setup
+## Local Setup
 
 ### Requirements
 
@@ -185,7 +185,7 @@ PYTHONPATH=. streamlit run ui/app.py
 
 ---
 
-## ☸️ OpenShift Alignment
+## OpenShift Alignment
 
 Designed for:
 
@@ -200,7 +200,7 @@ Supports:
 
 ---
 
-## 🔌 Extensibility
+## Extensibility
 
 ### Add new model
 
@@ -222,7 +222,7 @@ Supports:
 
 ---
 
-## ⚠️ Known Limitations (Intentional for Demo)
+## Known Limitations (Intentional for Demo)
 
 * Advisory mode only (no real execution)
 * Simulated outcome evaluation
@@ -231,7 +231,7 @@ Supports:
 
 ---
 
-## 🚀 Future Improvements
+## Future Improvements
 
 * Observability (agent drift / arbitration metrics)
 * Multi-model consensus
@@ -241,7 +241,7 @@ Supports:
 
 ---
 
-## 🧠 Demo Value
+## Demo Value
 
 This project demonstrates a shift from:
 
@@ -253,7 +253,7 @@ automation → governed decisioning
 
 ---
 
-## 🏁 Final Note
+## Final Note
 
 This is a **high-signal architecture demo**, designed to show:
 
