@@ -15,10 +15,10 @@ This is **not a production system** — it is an **architecture-first demo** foc
 ## Architecture First Approach
 
 📄 **Full architecture and design rationale:**  
-➡️ See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
+See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
 
 📄 **Key design decisions and tradeoffs:**  
-➡️ See [`docs/ADR.md`](./docs/ADR.md)
+See [`docs/ADR.md`](./docs/ADR.md)
 
 This document explains:
 
