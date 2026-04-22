@@ -282,5 +282,39 @@
       "recurrence": false,
       "score": 0.8
     }
+  },
+  {
+    "timestamp": "2026-04-21 21:21:25.263031",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.509,
+    "arbiter": "review",
+    "metrics": {
+      "execution_success": true,
+      "system_healthy": false,
+      "recurrence": true,
+      "score": 0.1
+    }
+  },
+  {
+    "timestamp": "2026-04-21 21:22:16.570505",
+    "log": "ERROR: OutOfMemoryError container restart loop in order-service",
+    "decision": {
+      "action": "restart_deployment",
+      "target": "order-service",
+      "namespace": "default"
+    },
+    "confidence": 0.499,
+    "arbiter": "review",
+    "metrics": {
+      "execution_success": true,
+      "system_healthy": true,
+      "recurrence": false,
+      "score": 0.8
+    }
   }
 ]

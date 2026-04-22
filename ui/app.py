@@ -21,6 +21,13 @@ if st.button("Run Analysis"):
 
     col1, col2 = st.columns([2, 1])
 
+    if "trace" in state:
+        st.download_button(
+            "Export Audit Log",
+            json.dumps(state["trace"], indent=2),
+            "audit_log.json"
+        )
+
     # =========================
     # LEFT — REASONING
     # =========================

@@ -2,15 +2,18 @@ from orchestrator.graph import build_graph
 from core.metrics import evaluate_outcome
 from core.history import save_incident
 from core.config import CONFIG
+from core.observability import emit_trace
+from core.feedback import feedback_writeback
 
 graph = build_graph()
-
 
 def run_pipeline(state):
 
     state = graph.invoke(state)
 
-    # execution advisory
+    trace = emit_trace(state)
+    state["trace"] = trace
+
     if state["arbiter_decision"] == "halt":
         state["execution_result"] = {
             "status": CONFIG["execution"]["blocked_status"]
@@ -24,5 +27,7 @@ def run_pipeline(state):
     state = evaluate_outcome(state)
 
     save_incident(state)
+
+    feedback_writeback(state)
 
     return state

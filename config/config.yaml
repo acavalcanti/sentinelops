@@ -117,3 +117,6 @@ execution:
   skipped_status: "skipped"
   advisory_reason: "advisory_mode"
   mode: local
+
+feedback:
+  min_score: 0.7

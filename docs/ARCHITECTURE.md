@@ -23,6 +23,30 @@ Log
 → Execution (Advisory)
 → Metrics / Feedback
 
+## State Flow Diagram
+
+```mermaid
+graph TD
+
+A[Log Input] --> B[Analysis Agent]
+B --> C[Signature Agent]
+C --> D[RAG Agent]
+D --> E[Decision Agent]
+E --> F[Policy Check]
+F --> G[Confidence Arbiter]
+
+G -->|Proceed| H[Execution]
+G -->|Review| I[Human Review]
+G -->|Halt| J[Stop]
+
+H --> K[Metrics Evaluation]
+K --> L[Feedback Loop]
+L --> D
+
+K --> M[History Storage]
+M --> N[Observability Trace]
+```
+
 ## Key Design Principles
 
 ### 1. Separation of Concerns
