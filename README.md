@@ -80,7 +80,7 @@ Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → E
 
 ### 🧠 AI Reasoning + RAG + Decision
 
-![Image](./img/img1.png)
+![Image](./docs/img/img1.png)
 
 The UI exposes:
 
@@ -93,7 +93,7 @@ The UI exposes:
 
 ### 🛡️ Governance + Pipeline Flow + Execution
 
-![Image](./img/img2.png)
+![Image](./docs/img/img2.png)
 
 * Arbiter decision (halt / review / proceed)
 * Confidence flow across pipeline
@@ -103,9 +103,9 @@ The UI exposes:
 
 ### 📊 Outcome Evaluation + History
 
-![Image](./img/img3.png)
+![Image](./docs/img/img3.png)
 
-![Image](./img/img4.png)
+![Image](./docs/img/img4.png)
 
 * Outcome scoring
 * System health simulation
@@ -125,6 +125,7 @@ execution/     → safe action routing
 config/        → YAML-driven system behavior
 ui/            → Streamlit glass-box UI
 data/          → RAG knowledge base
+docs/          → Project documentation
 ```
 
 ---
