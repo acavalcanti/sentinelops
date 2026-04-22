@@ -14,7 +14,7 @@ This is **not a production system** — it is an **architecture-first demo** foc
 
 ## 🧠 Architecture First Approach
 
-📄 **Full architecture and design rationale:**
+📄 **Full architecture and design rationale:**  
 ➡️ See [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
 
 📄 **Key design decisions and tradeoffs:**  
