@@ -61,14 +61,4 @@ def confidence_arbiter(state):
         }
     }
 
-    print("INPUTS:", analysis, rag, decision)
-    print("WEIGHTS:", weights)
-    print("FINAL:", final_conf)
-
-    print("ARB INPUT:", {
-        "analysis": analysis,
-        "rag": rag,
-        "decision": decision
-    })
-
     return state
