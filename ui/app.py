@@ -1,196 +1,170 @@
 import streamlit as st
 import json
-import time
+import pandas as pd
 
 from orchestrator.pipeline import run_pipeline
-from llm.providers.ollama import stream_generate
-from core.config import CONFIG
 
-st.set_page_config(layout="wide")
-st.title("🧠 SentinelOps AI — Glass Box Demo")
+st.set_page_config(page_title="SentinelOps AI", layout="wide")
 
-# INPUT
-log = st.text_area(
-    "Incident Log",
-    "ERROR: OutOfMemoryError container restart loop in order-service"
-)
+st.title("SentinelOps AI - Multi-Agent Incident Advisor")
 
+# 🧠 INPUT
+log = st.text_area("Enter log", height=150)
+
+# 🧠 SESSION STATE
+if "state" not in st.session_state:
+    st.session_state.state = None
+
+# 🧪 QUICK SCENARIOS
+st.subheader("Quick Test Scenarios")
+
+col_q1, col_q2 = st.columns(2)
+
+with col_q1:
+    if st.button("OOM Error"):
+        st.session_state.state = run_pipeline({
+            "log": "ERROR: OutOfMemoryError container restart loop in order-service"
+        })
+
+with col_q2:
+    if st.button("CrashLoopBackOff"):
+        st.session_state.state = run_pipeline({
+            "log": "ERROR: CrashLoopBackOff in payment-service"
+        })
+
+# 🧠 EXECUÇÃO MANUAL
 if st.button("Run Analysis"):
-
-    state = run_pipeline({"log": log})
-
-    col1, col2 = st.columns([2, 1])
-
-    if "trace" in state:
-        st.download_button(
-            "Export Audit Log",
-            json.dumps(state["trace"], indent=2),
-            "audit_log.json"
-        )
-
-    # =========================
-    # LEFT — REASONING
-    # =========================
-    with col1:
-
-        st.header("🧠 AI Reasoning")
-
-        # 🔥 NOVO — explicação da confiança (sem hardcode)
-        st.caption(CONFIG["ui"]["confidence_note"])
-
-        # -------------------------
-        # ANALYSIS
-        # -------------------------
-        with st.expander("📌 Analysis", expanded=True):
-
-            analysis = state.get("analysis")
-
-            if analysis:
-                st.markdown(analysis)
-            else:
-                container = st.empty()
-                text = ""
-
-                try:
-                    for token in stream_generate(log, CONFIG):
-                        text += token
-                        container.markdown(text)
-                except Exception:
-                    st.warning("No analysis available")
-
-            st.metric(
-                "Confidence",
-                float(state.get("analysis_confidence", 0))
-            )
-
-        # -------------------------
-        # RAG
-        # -------------------------
-        with st.expander("📚 RAG Retrieval", expanded=True):
-
-            candidates = state.get("rag_candidates", [])
-
-            if candidates:
-                for c in candidates:
-                    st.write(c.get("action"))
-                    st.progress(float(c.get("score", 0)))
-            else:
-                st.info("No candidates")
-
-            st.metric(
-                "RAG Confidence",
-                float(state.get("rag_confidence", 0))
-            )
-
-        # -------------------------
-        # DECISION
-        # -------------------------
-        with st.expander("🎯 Decision", expanded=True):
-            st.json(state.get("decision", {}))
-
-        # -------------------------
-        # CONFIDENCE BREAKDOWN
-        # -------------------------
-        with st.expander("📊 Confidence Breakdown", expanded=True):
-
-            st.bar_chart({
-                "analysis": float(state.get("analysis_confidence", 0)),
-                "rag": float(state.get("rag_confidence", 0)),
-                "decision": float(state.get("decision_confidence", 0)),
-                "final": float(state.get("final_confidence", 0))
-            })
-
-            st.metric(
-                "Final Confidence",
-                float(state.get("final_confidence", 0))
-            )
-
-    # =========================
-    # RIGHT — GOVERNANCE
-    # =========================
-    with col2:
-
-        st.header("🛡️ Governance")
-
-        arbiter = state.get("arbiter_decision")
-
-        if arbiter == "halt":
-            st.error("HALT")
-        elif arbiter == "review":
-            st.warning("REVIEW")
-        else:
-            st.success("PROCEED")
-
-        st.metric("Decision", arbiter)
-
-        # 🔥 NOVO — explicação do arbiter (sem hardcode)
-        st.caption(CONFIG["ui"]["arbiter_label"])
-        st.write(state.get("arbiter_reason", CONFIG["ui"]["arbiter_default"]))
-
-        st.divider()
-
-        # -------------------------
-        # PIPELINE FLOW
-        # -------------------------
-        st.header("🧠 Pipeline Flow")
-
-        for step, key in [
-            ("Analysis", "analysis_confidence"),
-            ("RAG", "rag_confidence"),
-            ("Decision", "decision_confidence"),
-            ("Arbiter", "final_confidence")
-        ]:
-            st.write(step)
-            st.progress(float(state.get(key, 0)))
-            time.sleep(CONFIG["ui"]["flow_delay"])
-
-        st.divider()
-
-        # -------------------------
-        # EXECUTION
-        # -------------------------
-        st.header("⚙️ Execution")
-
-        execution = state.get("execution_result")
-
-        if isinstance(execution, dict):
-            st.json(execution)
-        else:
-            st.info(CONFIG["ui"]["execution_empty"])
-
-    # =========================
-    # METRICS
-    # =========================
-    st.header("📊 Outcome Evaluation")
-
-    metrics = state.get("metrics")
-
-    if metrics:
-        st.json(metrics)
+    if log.strip():
+        st.session_state.state = run_pipeline({"log": log})
     else:
-        st.info(CONFIG["ui"]["metrics_empty"])
+        st.warning("Please enter a log before running analysis.")
 
-    # =========================
-    # HISTORY
-    # =========================
-    st.header("📈 History")
+# 🧠 RECUPERA STATE
+state = st.session_state.state
 
-    try:
-        with open(CONFIG["history"]["file"]) as f:
-            history = json.load(f)
-    except Exception:
-        history = []
+if state is None:
+    st.stop()
 
-    if history:
-        scores = [
-            float(h.get("metrics", {}).get("score", 0))
-            for h in history
-        ]
+# 🧠 VALORES PRINCIPAIS (SEM FALLBACK PERIGOSO)
+arbiter = state.get("arbiter_decision")
+final_conf = state.get("final_confidence", 0)
+decision_conf = state.get("decision_confidence", 0)
 
-        st.line_chart(scores)
+# 🟢 🔴 STATUS GLOBAL
+if arbiter == "proceed":
+    st.success(f"✅ Action Approved (arbiter confidence: {round(final_conf, 2)})")
+elif arbiter == "review":
+    st.warning(f"⚠️ Action Requires Review (arbiter confidence: {round(final_conf, 2)})")
+else:
+    st.error(f"⛔ Action Blocked (arbiter confidence: {round(final_conf, 2)})")
 
-    # =========================
-    # DEBUG
-    # =========================
-    with st.expander("🔎 Full State Debug"):
-        st.json(state)
+# 🧠 DECISION CONTEXT (🔥 importante para narrativa)
+st.subheader("Decision Context")
+
+policy = state.get("policy_result", {})
+risk = policy.get("risk", "unknown")
+
+if arbiter == "proceed":
+    arbiter_msg = "High confidence → safe to proceed"
+elif arbiter == "review":
+    arbiter_msg = "Low confidence → human review required"
+else:
+    arbiter_msg = "Blocked by governance"
+
+st.write({
+    "Policy": f"Approved: {policy.get('approved')} (risk: {risk})",
+    "Arbiter": arbiter_msg
+})
+
+# 📊 CONFIDENCE OVERVIEW (SEM FALLBACK)
+st.subheader("Confidence Overview")
+
+st.progress(final_conf)
+
+col_c1, col_c2 = st.columns(2)
+
+with col_c1:
+    st.metric("Final Confidence (Arbiter)", round(final_conf, 3))
+
+with col_c2:
+    st.metric("Decision Confidence (Agent)", round(decision_conf, 3))
+
+# 🧠 EXPLAINABILITY
+st.subheader("Why this decision?")
+
+st.write({
+    "Analysis (LLM)": state.get("analysis_confidence"),
+    "RAG (Knowledge)": state.get("rag_confidence"),
+    "Decision (Agent)": decision_conf,
+})
+
+# 🧠 LAYOUT PRINCIPAL
+col1, col2 = st.columns([2, 1])
+
+# 🔍 COLUNA PRINCIPAL
+with col1:
+
+    st.subheader("Analysis")
+
+    st.write(state.get("analysis", "N/A"))
+    st.metric("Analysis Confidence", state.get("analysis_confidence", 0))
+
+    st.subheader("Decision")
+
+    decision = state.get("decision") or state.get("action_spec")
+
+    if decision:
+        st.json(decision)
+    else:
+        st.warning("No decision generated")
+
+    st.subheader("Execution Result")
+    st.json(state.get("execution_result", {}))
+
+# 📊 COLUNA LATERAL
+with col2:
+
+    st.subheader("RAG (Retrieved Knowledge)")
+
+    rag_data = state.get("rag_candidates", [])
+    if rag_data:
+        df = pd.DataFrame(rag_data)
+        st.dataframe(df)
+    else:
+        st.info("No RAG candidates")
+
+    st.metric("RAG Confidence", state.get("rag_confidence", 0))
+
+    st.subheader("Arbiter Details")
+
+    st.write("Decision:", arbiter)
+    st.metric("Final Confidence", round(final_conf, 3))
+
+    st.subheader("Policy")
+    st.json(policy)
+
+# 📈 METRICS
+st.subheader("Outcome Evaluation")
+
+metrics = state.get("metrics")
+
+if metrics:
+    st.json(metrics)
+else:
+    st.info("No evaluation available")
+
+# 🔍 TRACE
+with st.expander("🔍 Full State Debug"):
+    st.json(state)
+
+# 📥 EXPORT
+if "trace" in state:
+
+    trace_json = json.dumps(state["trace"], indent=2)
+
+    st.download_button(
+        label="📥 Export Audit Log",
+        data=trace_json,
+        file_name="sentinelops_audit.json",
+        mime="application/json"
+    )

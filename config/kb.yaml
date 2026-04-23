@@ -2,11 +2,11 @@ kb:
   - signature: oom_error
     action: restart_deployment
 
-  - trigger: oom_error
+  - signature: oom_error
     action: restart_deployment
 
-  - trigger: db_timeout
+  - signature: db_timeout
     action: scale_deployment
 
-  - trigger: disk_pressure
+  - signature: disk_pressure
     action: cleanup_volume

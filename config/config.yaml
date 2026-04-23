@@ -43,6 +43,7 @@ metrics:
     advisory_success:
       - "skipped"
       - "blocked"
+      - "advisory"
 
   health:
     success_bias: 0.7
@@ -65,17 +66,18 @@ policy:
     restart_deployment:
       allowed: true
       risk: low
+    scale_deployment:
+      allowed: true
+      risk: medium
+    cleanup_volume:
+      allowed: true
+      risk: high
 
   thresholds:
     hard: 0.4
     review: 0.6
 
   precision: 3
-
-learning:
-  weights:
-    success: 0.3
-    health: 0.7
 
 agents:
   defaults:
@@ -100,21 +102,23 @@ decision:
   default_target: "unknown-service"
   default_namespace: "default"
 
-execution:
-  blocked_status: "blocked"
-  skipped_status: "advisory"
-  advisory_reason: "Action not executed (advisory mode)"
-  mode: local
-
 arbiter:
   weights:
     analysis: 0.4
     rag: 0.3
     decision: 0.3
+
   thresholds:
-    hard: 0.4
-    review: 0.65
+    hard: 0.3
+    review: 0.6
+
   precision: 3
+
+execution:
+  blocked_status: "blocked"
+  skipped_status: "advisory"
+  advisory_reason: "Action not executed (advisory mode)"
+  mode: local
 
 feedback:
   min_score: 0.6
@@ -124,4 +128,6 @@ rag:
     collection: "incidents"
     top_k: 3
     default_confidence: 0.3
+    norm_score: 0.95
     min_score: 0.2
+    

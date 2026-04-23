@@ -1,9 +1,11 @@
 from typing import TypedDict, List, Dict, Optional
 
 class State(TypedDict, total=False):
+
     log: str
 
     # analysis
+    analysis: str 
     structured_facts: str
     analysis_confidence: float
 
@@ -22,6 +24,9 @@ class State(TypedDict, total=False):
     arbiter_decision: str
     policy_result: Dict
 
+    final_confidence: float
+    arbiter_reason: Dict
+
     # execution
     execution_result: Dict
     system_health: bool
@@ -34,3 +39,4 @@ class State(TypedDict, total=False):
 
     # trace
     trace: Dict
+

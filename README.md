@@ -27,47 +27,56 @@ This document explains:
 * Separation between probabilistic vs deterministic logic
 * Governance and risk mitigation strategy
 
+See [`docs/WHITEPAPER.md`](./docs/WHITEPAPER.md) for full architectural rationale
+
 ---
 
 ## Purpose of this Demo
 
-This project demonstrates:
+This project demonstrates how to design **enterprise-ready AI systems**, not just LLM features:
 
-* How to design **AI systems beyond simple LLM calls**
-* How to implement **governance layers for AI safety**
-* How to separate:
-
-  * **Reasoning (LLMs)**
-  * **Control (Policy / Arbiter)**
-  * **Execution (Systems)**
-* How to build **trustable AI systems** instead of black-box automation
+- Multi-agent reasoning pipelines  
+- Governance layers for AI safety  
+- Separation of responsibilities:
+  - Reasoning (LLMs)  
+  - Context (RAG)  
+  - Decision (Agent)  
+  - Control (Arbiter + Policy)  
+  - Execution (Isolated)  
 
 ---
 
 ## Core Concepts Demonstrated
 
-* Multi-Agent Orchestration (LangGraph)
-* Retrieval-Augmented Generation (Qdrant)
-* Model Abstraction (LLM Router)
-* Policy-as-Code (YAML-driven governance)
-* Human-in-the-Loop readiness
-* Glass-Box Explainability UI
+- Multi-Agent Orchestration (LangGraph)  
+- Retrieval-Augmented Generation (Qdrant)  
+- Model Abstraction (LLM Router)  
+- Policy-as-Code (YAML-driven governance)  
+- Human-in-the-Loop readiness  
+- Glass-Box Explainability UI  
+- Agent Observability (structured trace output)  
+- RAG feedback loop (learning from outcomes)  
 
 ---
 
 ## System Flow
 
-```text
-Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation
-```
-* Feedback loop implemented via Qdrant write-back  
-* Triggered by outcome score threshold  
+Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation → Feedback
+
+### Key Features
+
+- Feedback loop implemented via Qdrant write-back  
+- Triggered by outcome score threshold  
+- Confidence evolves gradually (no hard jumps)  
+- Observability trace generated for every run  
 
 ---
 
-## Key Architectural Principle
+## Key Architectural Principles
 
-> The LLM is treated as an **unreliable component** — and is governed accordingly.
+### LLMs are unreliable by design
+
+The LLM is treated as an **unreliable component** and governed accordingly.
 
 * LLM generates hypotheses
 * RAG adds context
@@ -75,6 +84,35 @@ Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → E
 * Arbiter evaluates confidence
 * Policy validates safety
 * Execution is isolated
+
+### Safety vs Confidence
+
+| Layer   | Responsibility                                 |
+|---------|------------------------------------------------|
+| Policy  | Determines if an action is allowed             |
+| Arbiter | Determines if the system has enough confidence |
+
+---
+
+## Adaptive Learning (RAG Write-Back)
+
+- Successful incidents are written back into Qdrant  
+- Future retrievals incorporate past outcomes  
+- Confidence increases progressively  
+
+---
+
+## Observability & Auditability
+
+Each execution generates a structured trace including:
+
+- analysis_confidence  
+- rag_confidence  
+- decision_confidence  
+- final_confidence  
+- arbiter_decision  
+
+Supports audit log export via UI.
 
 ---
 
@@ -127,7 +165,7 @@ execution/     → safe action routing
 config/        → YAML-driven system behavior
 ui/            → Streamlit glass-box UI
 data/          → RAG knowledge base
-docs/          → Project documentation
+docs/          → project documentation
 ```
 
 ---
@@ -235,10 +273,11 @@ Supports:
 
 ## Future Improvements
 
-* Observability (agent drift / arbitration metrics)
-* Multi-model consensus
-* Policy engine externalization (OPA)
-* Event-driven pipeline (Kafka)
+* Drift detection  
+* Cost observability  
+* Multi-model arbitration  
+* OPA integration
+* Event-driven pipeline (Kafka)  
 
 ---
 
@@ -249,6 +288,7 @@ This project demonstrates a shift from:
 ```text
 LLM scripts → AI systems
 black-box → glass-box
+stateless → adaptive systems
 automation → governed decisioning
 ```
 
@@ -258,8 +298,7 @@ automation → governed decisioning
 
 This is a **high-signal architecture demo**, designed to show:
 
-* System thinking
-* Risk-aware AI design
-* Enterprise-ready patterns
-
-— not just code.
+- System thinking  
+- Risk-aware AI design  
+- Adaptive learning systems  
+- Enterprise-ready patterns  

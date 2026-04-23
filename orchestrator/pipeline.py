@@ -4,11 +4,13 @@ from core.history import save_incident
 from core.config import CONFIG
 from core.observability import emit_trace
 from core.feedback import feedback_writeback
-
+from rag.setup import ensure_collection
 
 def run_pipeline(state):
 
     graph = build_graph()
+
+    ensure_collection()
 
     state = graph.invoke(state)
 

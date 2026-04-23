@@ -2,6 +2,7 @@ from core.config import CONFIG
 from rag.embedding import embed
 from qdrant_client import QdrantClient
 import hashlib
+import uuid
 
 cfg = CONFIG["services"]["qdrant"]
 
@@ -22,17 +23,25 @@ def feedback_writeback(state):
 
     vector = embed(state["log"])
 
+    base_conf = state.get("final_confidence", 0)
+
+    confidence = min(base_conf * 0.8, 0.85)
+
     payload = {
         "action": state.get("action_spec", {}).get("action"),
+        "log": state.get("log"),
         "source": "feedback",
-        "confidence": state.get("final_confidence")
+        "confidence": confidence
     }
+
+    point_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, state["log"]))
 
     client.upsert(
         collection_name=CONFIG["rag"]["retrieval"]["collection"],
         points=[{
-            "id": hashlib.sha256(state["log"].encode()).hexdigest(),
+            "id": point_id,
             "vector": vector,
             "payload": payload
         }]
     )
+

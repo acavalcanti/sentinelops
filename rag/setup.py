@@ -3,32 +3,41 @@ from qdrant_client.models import VectorParams, Distance
 from rag.embedding import embed
 from core.config import CONFIG
 
-def init_qdrant():
+
+def ensure_collection():
 
     cfg = CONFIG["services"]["qdrant"]
     emb_cfg = CONFIG["embedding"]
+    collection = CONFIG["rag"]["retrieval"]["collection"]
 
     client = QdrantClient(cfg["host"], port=cfg["port"])
 
-    # recria coleção (reset)
-    client.recreate_collection(
-        collection_name="incidents",
-        vectors_config=VectorParams(
-            size=emb_cfg["dimension"],
-            distance=Distance.COSINE
-        ),
-    )
+    collections = client.get_collections().collections
+    existing = [c.name for c in collections]
 
-    for i, item in enumerate(CONFIG["kb"]):
+    if collection not in existing:
 
-        client.upsert(
-            collection_name="incidents",
-            points=[{
-                "id": i,
-                "vector": embed(item["signature"]),
-                "payload": {
-                    "action": item["action"],
-                    "signature": item["signature"]
-                }
-            }]
+        client.create_collection(
+            collection_name=collection,
+            vectors_config=VectorParams(
+                size=emb_cfg["dimension"],
+                distance=Distance.COSINE
+            ),
         )
+
+
+        if client.count(collection_name=collection).count == 0:
+
+            for i, item in enumerate(CONFIG["kb"]):
+
+                client.upsert(
+                    collection_name=collection,
+                    points=[{
+                        "id": i,
+                        "vector": embed(item["signature"]),
+                        "payload": {
+                            "action": item["action"],
+                            "signature": item["signature"]
+                        }
+                    }]
+                )

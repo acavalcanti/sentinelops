@@ -5,6 +5,17 @@ def confidence_arbiter(state):
 
     cfg = CONFIG["arbiter"]
 
+    policy = state.get("policy_result", {})
+
+    if not policy.get("approved", True):
+        state["arbiter_decision"] = "halt"
+        state["final_confidence"] = 0
+        state["arbiter_reason"] = {
+            "reason": "policy_denied",
+            "policy": policy
+        }
+        return state
+
     weights = cfg["weights"]
     thresholds = cfg["thresholds"]
     precision = cfg["precision"]
@@ -49,5 +60,15 @@ def confidence_arbiter(state):
             "decision": decision
         }
     }
+
+    print("INPUTS:", analysis, rag, decision)
+    print("WEIGHTS:", weights)
+    print("FINAL:", final_conf)
+
+    print("ARB INPUT:", {
+        "analysis": analysis,
+        "rag": rag,
+        "decision": decision
+    })
 
     return state

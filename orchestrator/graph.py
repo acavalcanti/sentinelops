@@ -34,4 +34,6 @@ def build_graph():
     graph.add_edge("decision", "policy")
     graph.add_edge("policy", "arbiter")
 
+    graph.set_finish_point("arbiter")
+
     return graph.compile()
