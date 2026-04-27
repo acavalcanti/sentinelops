@@ -30,3 +30,6 @@ rag/index/
 
 # OS
 .DS_Store
+
+#tools
+.continue/
