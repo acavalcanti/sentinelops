@@ -20,9 +20,7 @@ def analysis_agent(state):
         state["analysis_confidence"] = round(conf_cfg["base"], conf_cfg["precision"])
         return state
 
-    state["analysis"] = result if result else cfg["fallback_text"]
-
-
+    state["analysis"] = result 
 
     confidence = conf_cfg["base"] + random.uniform(
         conf_cfg["variance_min"],
