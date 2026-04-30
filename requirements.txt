@@ -1,6 +1,6 @@
-streamlit
-langgraph
-requests
-qdrant-client
-sentence-transformers
-pyyaml
+streamlit==1.43.2
+langgraph==0.3.31
+requests==2.32.3
+qdrant-client==1.13.3
+sentence-transformers==3.4.1
+pyyaml==6.0.2
