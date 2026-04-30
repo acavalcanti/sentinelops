@@ -1,7 +1,6 @@
 from core.config import CONFIG
 from rag.embedding import embed
 from qdrant_client import QdrantClient
-import hashlib
 import uuid
 
 cfg = CONFIG["services"]["qdrant"]
