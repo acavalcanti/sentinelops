@@ -10,7 +10,6 @@ from core.arbiter import confidence_arbiter
 
 
 def policy_agent(state):
-
     state["policy_result"] = policy_check(state.get("action_spec", {}))
     return state
 
@@ -19,21 +18,21 @@ def build_graph():
 
     graph = StateGraph(State)
 
-    graph.add_node("analysis", analysis_agent)
-    graph.add_node("signature", signature_agent)
-    graph.add_node("rag", rag_agent)
-    graph.add_node("decision", decision_agent)
-    graph.add_node("policy", policy_agent)
-    graph.add_node("arbiter", confidence_arbiter)
+    graph.add_node("analysis_node", analysis_agent)
+    graph.add_node("signature_node", signature_agent)
+    graph.add_node("rag_node", rag_agent)
+    graph.add_node("decision_node", decision_agent)
+    graph.add_node("policy_node", policy_agent)
+    graph.add_node("arbiter_node", confidence_arbiter)
 
-    graph.set_entry_point("analysis")
+    graph.set_entry_point("analysis_node")
 
-    graph.add_edge("analysis", "signature")
-    graph.add_edge("signature", "rag")
-    graph.add_edge("rag", "decision")
-    graph.add_edge("decision", "policy")
-    graph.add_edge("policy", "arbiter")
+    graph.add_edge("analysis_node", "signature_node")
+    graph.add_edge("signature_node", "rag_node")
+    graph.add_edge("rag_node", "decision_node")
+    graph.add_edge("decision_node", "policy_node")
+    graph.add_edge("policy_node", "arbiter_node")
 
-    graph.set_finish_point("arbiter")
+    graph.set_finish_point("arbiter_node")
 
     return graph.compile()
