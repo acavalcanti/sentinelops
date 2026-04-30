@@ -145,8 +145,6 @@ The UI exposes:
 
 ![Image](./docs/img/img3.png)
 
-![Image](./docs/img/img4.png)
-
 * Outcome scoring
 * System health simulation
 * Incident history tracking
@@ -201,7 +199,7 @@ pip install -r requirements.txt
 ### Initialize RAG
 
 ```bash
-python -c "from rag.setup import init_qdrant; init_qdrant()"
+python3 -c "from rag.setup import ensure_collection; ensure_collection()"
 ```
 
 ---
