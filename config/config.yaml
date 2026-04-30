@@ -73,10 +73,6 @@ policy:
       allowed: true
       risk: high
 
-  thresholds:
-    hard: 0.4
-    review: 0.6
-
   precision: 3
 
 agents:
