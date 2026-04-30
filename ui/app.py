@@ -8,14 +8,11 @@ st.set_page_config(page_title="SentinelOps AI", layout="wide")
 
 st.title("SentinelOps AI - Multi-Agent Incident Advisor")
 
-# 🧠 INPUT
 log = st.text_area("Enter log", height=150)
 
-# 🧠 SESSION STATE
 if "state" not in st.session_state:
     st.session_state.state = None
 
-# 🧪 QUICK SCENARIOS
 st.subheader("Quick Test Scenarios")
 
 col_q1, col_q2 = st.columns(2)
@@ -32,25 +29,21 @@ with col_q2:
             "log": "ERROR: CrashLoopBackOff in payment-service"
         })
 
-# 🧠 EXECUÇÃO MANUAL
 if st.button("Run Analysis"):
     if log.strip():
         st.session_state.state = run_pipeline({"log": log})
     else:
         st.warning("Please enter a log before running analysis.")
 
-# 🧠 RECUPERA STATE
 state = st.session_state.state
 
 if state is None:
     st.stop()
 
-# 🧠 VALORES PRINCIPAIS (SEM FALLBACK PERIGOSO)
 arbiter = state.get("arbiter_decision")
 final_conf = state.get("final_confidence", 0)
 decision_conf = state.get("decision_confidence", 0)
 
-# 🟢 🔴 STATUS GLOBAL
 if arbiter == "proceed":
     st.success(f"✅ Action Approved (arbiter confidence: {round(final_conf, 2)})")
 elif arbiter == "review":
@@ -58,7 +51,6 @@ elif arbiter == "review":
 else:
     st.error(f"⛔ Action Blocked (arbiter confidence: {round(final_conf, 2)})")
 
-# 🧠 DECISION CONTEXT (🔥 importante para narrativa)
 st.subheader("Decision Context")
 
 policy = state.get("policy_result", {})
@@ -76,7 +68,6 @@ st.write({
     "Arbiter": arbiter_msg
 })
 
-# 📊 CONFIDENCE OVERVIEW (SEM FALLBACK)
 st.subheader("Confidence Overview")
 
 st.progress(final_conf)
@@ -89,7 +80,6 @@ with col_c1:
 with col_c2:
     st.metric("Decision Confidence (Agent)", round(decision_conf, 3))
 
-# 🧠 EXPLAINABILITY
 st.subheader("Why this decision?")
 
 st.write({
@@ -98,10 +88,8 @@ st.write({
     "Decision (Agent)": decision_conf,
 })
 
-# 🧠 LAYOUT PRINCIPAL
 col1, col2 = st.columns([2, 1])
 
-# 🔍 COLUNA PRINCIPAL
 with col1:
 
     st.subheader("Analysis")
@@ -121,7 +109,6 @@ with col1:
     st.subheader("Execution Result")
     st.json(state.get("execution_result", {}))
 
-# 📊 COLUNA LATERAL
 with col2:
 
     st.subheader("RAG (Retrieved Knowledge)")
@@ -143,7 +130,6 @@ with col2:
     st.subheader("Policy")
     st.json(policy)
 
-# 📈 METRICS
 st.subheader("Outcome Evaluation")
 
 metrics = state.get("metrics")
@@ -153,11 +139,9 @@ if metrics:
 else:
     st.info("No evaluation available")
 
-# 🔍 TRACE
 with st.expander("🔍 Full State Debug"):
     st.json(state)
 
-# 📥 EXPORT
 if "trace" in state:
 
     trace_json = json.dumps(state["trace"], indent=2)
