@@ -6,7 +6,6 @@ class State(TypedDict, total=False):
 
     # analysis
     analysis: str 
-    structured_facts: str
     analysis_confidence: float
 
     # signature
@@ -29,10 +28,6 @@ class State(TypedDict, total=False):
 
     # execution
     execution_result: Dict
-    system_health: bool
-
-    # learning
-    learning_record: Dict
 
     # errors
     error: str

@@ -5,6 +5,7 @@ from core.config import CONFIG
 from core.observability import emit_trace
 from core.feedback import feedback_writeback
 from rag.setup import ensure_collection
+from execution.router import execute 
 
 def run_pipeline(state):
 
@@ -30,13 +31,8 @@ def run_pipeline(state):
             "action": state.get("action_spec")
         }
 
-    else:  # proceed
-
-        state["execution_result"] = {
-            "status": CONFIG["execution"]["skipped_status"],
-            "reason": CONFIG["execution"]["advisory_reason"],
-            "action": state.get("action_spec")
-        }
+    else:  
+        state["execution_result"] = execute(state.get("action_spec"))  
 
     state = evaluate_outcome(state)
 

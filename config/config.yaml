@@ -55,6 +55,10 @@ metrics:
 
   round: 2
 
+router:
+  advisory:
+    error: "Execution is advisory-only. No real action was performed."
+
 history:
   file: "data/history.json"
   limit: 20
@@ -72,8 +76,6 @@ policy:
     cleanup_volume:
       allowed: true
       risk: high
-
-  precision: 3
 
 agents:
   defaults:
@@ -113,7 +115,6 @@ arbiter:
 execution:
   blocked_status: "blocked"
   skipped_status: "advisory"
-  advisory_reason: "Action not executed (advisory mode)"
   mode: local
 
 feedback:

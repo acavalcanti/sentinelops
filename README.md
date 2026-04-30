@@ -61,7 +61,7 @@ This project demonstrates how to design **enterprise-ready AI systems**, not jus
 
 ## System Flow
 
-Log → Analysis → Signature → RAG → Decision → Arbiter → Policy → Execution → Evaluation → Feedback
+Log → Analysis → Signature → RAG → Decision → Policy → Arbiter → Execution → Evaluation → Feedback
 
 ### Key Features
 

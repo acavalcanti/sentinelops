@@ -85,6 +85,51 @@ Use **RAG (Qdrant)** instead of static mappings.
 
 ---
 
+## ADR-005 — Analysis Confidence Model
+
+**Context**
+
+The analysis agent invokes an LLM to reason about an incident log. A confidence
+score is required downstream by the arbiter to make a governance decision.
+The natural approach would be to ask the LLM to self-report its own confidence.
+
+***Decision***
+
+Use a bounded random signal (`base + uniform(variance_min, variance_max)`)
+rather than LLM self-reported confidence.
+
+***Rationale***
+
+- **LLM self-reported confidence is unreliable.** Small models (phi, mistral)
+  consistently over-report confidence regardless of actual output quality.
+  Self-assessment scores cluster near 0.9 and provide no discriminating signal.
+- **Hedging-language heuristics are model-dependent.** Parsing phrases like
+  "I think" or "possibly" requires prompt tuning per model family, which
+  conflicts with the multi-provider abstraction goal.
+- **Bounded variance honestly represents epistemic uncertainty.** In a real
+  system, analysis confidence would derive from ensemble agreement or
+  calibration data neither of which exists in a demo context. Random variance
+  within a realistic range (`0.6–0.9`) is more honest than a fake precise
+  number extracted from LLM output.
+
+***Tradeoffs***
+
+| Option                  | Pro                   | Con                                  |
+|-------------------------|-----------------------|--------------------------------------|
+| LLM self-report         | Feels "real"          | Unreliable, model-specific, inflated |
+| Hedging heuristic       | Cheap proxy           | Fragile, prompt-dependent            |
+| Bounded random (chosen) | Honest, config-driven | Not a real measurement               |
+
+***Consequences***
+
+- Confidence parameters (`base`, `variance_min`, `variance_max`) are
+  externalized to `config.yaml` so the range can be tuned per demo context.
+- The UI surfaces a note acknowledging the simulated variance.
+- A production system would replace this with calibration data or an
+  ensemble signal. This is explicitly listed as a future improvement.
+
+---
+
 ## Summary
 
 These decisions prioritize:

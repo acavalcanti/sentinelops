@@ -6,14 +6,23 @@ import random
 def analysis_agent(state):
 
     cfg = CONFIG["analysis"]
+    conf_cfg = cfg["confidence"]
 
     prompt = cfg["prompt"].format(log=state["log"])
 
     result = call_llm(prompt)
 
+    if not result or result == cfg["fallback_text"]:
+        # LLM unavailable or returned nothing — use base confidence floor,
+        # not random variance. A random score on zero-information analysis
+        # would misrepresent the arbiter's input quality.
+        state["analysis"] = cfg["fallback_text"]
+        state["analysis_confidence"] = round(conf_cfg["base"], conf_cfg["precision"])
+        return state
+
     state["analysis"] = result if result else cfg["fallback_text"]
 
-    conf_cfg = cfg["confidence"]
+
 
     confidence = conf_cfg["base"] + random.uniform(
         conf_cfg["variance_min"],
