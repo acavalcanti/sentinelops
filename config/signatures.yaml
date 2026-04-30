@@ -6,3 +6,7 @@ signatures:
   - name: db_timeout
     match: ["timeout", "database"]
     confidence: 0.7
+  
+  - name: disk_pressure
+    match: ["disk", "pressure", "pvc"]
+    confidence: 0.75
