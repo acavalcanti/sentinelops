@@ -2,9 +2,6 @@ kb:
   - signature: oom_error
     action: restart_deployment
 
-  - signature: oom_error
-    action: restart_deployment
-
   - signature: db_timeout
     action: scale_deployment
 
